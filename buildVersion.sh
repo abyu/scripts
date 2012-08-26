@@ -1,6 +1,7 @@
 IFS=$IFS
 echo "Searching for commit(s) with messages containing text $1" 
-commitIdsRaw=$(git log --grep=$1 --pretty="%h"| tr '\n' ';')
+branch=$2
+commitIdsRaw=$(git log $branch --grep=$1 --pretty="%h"| tr '\n' ';')
 IFS=';'
 commitIds=($commitIdsRaw)
 IFS=$OIFS
@@ -9,9 +10,9 @@ if [ commitsCount -gt "0" ] then
 	echo "Commit(s) with id ${commitIds[@]} found" 
 	for commitId in ${commitIds[@]}
 	do
-		commitMessage=$(git log $commitId...$commitId^ --pretty="%s")
+		commitMessage=$(git log $branch $commitId...$commitId^ --pretty="%s")
 		echo "Looking for build version containing commit <$commitMessage> "
-		buildVersionsRaw=$(git log HEAD...$commitId^ --pretty="%h%d" | sed -n s/'.*\(([0-9\., ]*)\).*'/'\1'/gp | tr '\n' ';')
+		buildVersionsRaw=$(git log $branch HEAD...$commitId^ --pretty="%h%d" | sed -n s/'.*\(([0-9\., ]*)\).*'/'\1'/gp | tr '\n' ';')
 		IFS=';'
 		buildVersions=($buildVersionsRaw)
 		IFS=OIFS
@@ -25,6 +26,6 @@ if [ commitsCount -gt "0" ] then
 else
 	echo "No commits found"
 fi
-latestVersion=$(git describe --abbrev=0)
+latestVersion=$(git describe $branch --abbrev=0)
 echo "Available Latest build version is $latestVersion"
 echo "Enjoy! Have a nice day !"
