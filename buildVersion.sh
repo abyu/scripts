@@ -7,7 +7,6 @@ if [ $# -lt 1 ]; then
 	exit 0
 fi
 echo "Searching for commit(s) with messages containing text $1" 
-branch=$2
 commitIdsRaw=$(git log $branch --grep=$1 --pretty="%h"| tr '\n' ';')
 IFS=';'
 commitIds=($commitIdsRaw)
@@ -18,20 +17,20 @@ if [ "$commitsCount" -gt "0" ]; then
 	for commitId in ${commitIds[@]}
 	do
 		commitMessage=$(git log $commitId...$commitId^ --pretty="%s")
-		echo "Looking for build version containing commit <$commitMessage> "
+		echo -e "\nLooking for build version containing commit: $commitMessage"
 		buildVersionsRaw=$(git log HEAD...$commitId^ --pretty="%h%d" | sed -n s/'.*\(([0-9\., ]*)\).*'/'\1'/gp | tr '\n' ';')
 		IFS=';'
 		buildVersions=($buildVersionsRaw)
 		IFS=OIFS
 		versionsCount=${#buildVersions[@]}
 	if [ "$versionsCount" -lt "1" ]; then
-		echo "They build is not available yet. Make sure your repo is updated and try again"
+		echo -e "They build is not available yet. Make sure your repo is updated and try again\n"
 	else
-		echo "The commit is present in the build version - ${buildVersions[$versionsCount-1]}"
+		echo -e "The commit is present in the build version - ${buildVersions[$versionsCount-1]}\n"
 	fi
 	done
 else
-	echo "No commits found"
+	echo -e "No commits found\n"
 fi
-echo "Available Latest build version is $latestVersion"
+echo -e "Available Latest build version is $latestVersion\n"
 echo "Enjoy! Have a nice day !"
