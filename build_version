@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# BuildVersion script by Kishore @ http://github.com/abyu
 
 IFS=$IFS
 latestVersion=$(git describe $branch --abbrev=0)
