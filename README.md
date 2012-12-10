@@ -1,0 +1,1 @@
+shell script to get the build version(tag) given a story number or a part of commit message
