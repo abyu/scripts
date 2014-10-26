@@ -1,0 +1,14 @@
+temp_path=""
+for file in /etc/paths.d/*
+do
+	if [ -f "$file" ]; then
+		while read line 
+		do
+      if [[ ! $PATH =~ .*"$line".* ]]; then
+			  temp_path=$line:$temp_path
+      fi
+		done < "$file"
+	fi
+done
+
+export PATH=$temp_path$PATH
